@@ -43,7 +43,11 @@ class WeatherViewModel: ObservableObject {
     @Published var weather: Weather?
     @Published var selectedLocation: Location = .japan
 
-    private let provider = MoyaProvider<WeatherAPIService>()
+    private let provider: MoyaProvider<WeatherAPIService>
+
+    init(provider: MoyaProvider<WeatherAPIService> = MoyaProvider<WeatherAPIService>()) {
+        self.provider = provider
+    }
 
     func fetchWeather() async {
         do {
