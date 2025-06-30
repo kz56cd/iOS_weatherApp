@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Moya
 
 @MainActor
 class WeatherViewModel: ObservableObject {
@@ -42,16 +43,12 @@ class WeatherViewModel: ObservableObject {
     @Published var weather: Weather?
     @Published var selectedLocation: Location = .japan
 
-    func fetchWeather() async {
-        let urlString = "https://api.open-meteo.com/v1/forecast?latitude=\(selectedLocation.latitude)&longitude=\(selectedLocation.longitude)&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_mean&timezone=Asia%2FTokyo"
-        guard let url = URL(string: urlString) else {
-            print("Invalid URL")
-            return
-        }
+    private let provider = MoyaProvider<WeatherAPIService>()
 
+    func fetchWeather() async {
         do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            var decodedWeather = try JSONDecoder().decode(Weather.self, from: data)
+            let response = try await provider.request(.getWeather(latitude: selectedLocation.latitude, longitude: selectedLocation.longitude))
+            var decodedWeather = try JSONDecoder().decode(Weather.self, from: response.data)
             decodedWeather.locationName = selectedLocation.locationName
             weather = decodedWeather
         } catch {
