@@ -13,26 +13,50 @@ class WeatherViewModel: ObservableObject {
         case japan = "Tokyo"
         case usa = "New York"
         case uk = "London"
-    }
-    
-    @Published var weather: Weather?
-    @Published var selectedLocation: Location = .japan
-    
-    func fetchWeather() async {
-        let city = selectedLocation.rawValue
-//        try! await Task.sleep(nanoseconds: 1_000_000) // 模擬的な遅延
 
-        // モックデータ（APIで取得した形式に合わせて置き換え可能）
-        // TODO: Implement the actual API call to fetch weather data.
-        switch selectedLocation {
-        case .japan:
-            weather = Weather(locationName: "東京", description: "晴れ", tempMax: 30, tempMin: 22, precipitation: 10)
-        case .usa:
-            weather = Weather(locationName: "ニューヨーク", description: "くもり", tempMax: 25, tempMin: 18, precipitation: 40)
-        case .uk:
-            weather = Weather(locationName: "ロンドン", description: "雨", tempMax: 20, tempMin: 15, precipitation: 80)
+        var latitude: Double {
+            switch self {
+            case .japan: return 35.6895
+            case .usa: return 40.7128
+            case .uk: return 51.5074
+            }
+        }
+
+        var longitude: Double {
+            switch self {
+            case .japan: return 139.6917
+            case .usa: return -74.0060
+            case .uk: return -0.1278
+            }
         }
         
+        var locationName: String {
+            switch self {
+            case .japan: return "東京"
+            case .usa: return "ニューヨーク"
+            case .uk: return "ロンドン"
+            }
+        }
+    }
+
+    @Published var weather: Weather?
+    @Published var selectedLocation: Location = .japan
+
+    func fetchWeather() async {
+        let urlString = "https://api.open-meteo.com/v1/forecast?latitude=\(selectedLocation.latitude)&longitude=\(selectedLocation.longitude)&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_mean&timezone=Asia%2FTokyo"
+        guard let url = URL(string: urlString) else {
+            print("Invalid URL")
+            return
+        }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            var decodedWeather = try JSONDecoder().decode(Weather.self, from: data)
+            decodedWeather.locationName = selectedLocation.locationName
+            weather = decodedWeather
+        } catch {
+            print("Error fetching or decoding weather data: \(error)")
+        }
     }
     
     func switchLocation() async {
