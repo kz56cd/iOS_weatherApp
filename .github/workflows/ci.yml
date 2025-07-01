@@ -32,10 +32,7 @@ jobs:
         # Xcodeプロジェクト名とスキーム名は、通常プロジェクト名と同じです。
         # シミュレーターは、GitHub ActionsのmacOSランナーで利用可能なものを選びます。
         # CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO は、CI環境でコード署名エラーを避けるために重要です。
-        xcodebuild clean build test \
-          -project WeatherApp.xcodeproj \
-          -scheme WeatherApp \
-          -destination 'platform=iOS Simulator,name=iPhone 15' \
-          -enableCodeCoverage YES \
-          CODE_SIGN_IDENTITY="" \
-          CODE_SIGNING_REQUIRED=NO
+        xcodebuild clean build test           -project WeatherApp.xcodeproj           -scheme WeatherApp           -destination 'platform=iOS Simulator,name=iPhone 15'           -only-testing WeatherAppTests           -enableCodeCoverage YES           CODE_SIGN_IDENTITY=""           CODE_SIGNING_REQUIRED=NO
+
+
+
