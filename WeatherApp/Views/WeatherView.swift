@@ -71,9 +71,9 @@ struct WeatherView: View {
                 .navigationTitle("Weather")
                 .foregroundStyle(Color.black.opacity(0.5))
                 .padding()
-                .task {
-                    await viewModel.fetchWeather()
-                }
+            }
+            .task {
+                await viewModel.fetchWeather()
             }
         }
     }

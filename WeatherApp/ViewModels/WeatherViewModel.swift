@@ -38,6 +38,14 @@ class WeatherViewModel: ObservableObject {
             case .uk: return "ロンドン"
             }
         }
+
+        var timezone: String {
+            switch self {
+            case .japan: return "Asia/Tokyo"
+            case .usa: return "America/New_York"
+            case .uk: return "Europe/London"
+            }
+        }
     }
 
     @Published var weather: Weather?
@@ -54,28 +62,37 @@ class WeatherViewModel: ObservableObject {
     private let unsplashService = UnsplashService()
 
     func fetchWeather() async {
-        async let fetchWeather: () = fetchWeatherData()
-        async let fetchImage: () = fetchBackgroundImage()
-        _ = await (fetchWeather, fetchImage)
+        // Reset state before fetching to ensure a clean loading state
+        self.weather = nil
+        self.backgroundImageURL = nil
+
+        async let weatherResult = fetchWeatherData()
+        async let imageURLResult = fetchBackgroundImage()
+
+        // Await both results concurrently and then update the state once.
+        let (weatherData, imageURL) = await (weatherResult, imageURLResult)
+        self.weather = weatherData
+        self.backgroundImageURL = imageURL
     }
 
-    private func fetchWeatherData() async {
+    private func fetchWeatherData() async -> Weather? {
         do {
-            let response = try await provider.request(.getWeather(latitude: selectedLocation.latitude, longitude: selectedLocation.longitude))
+            let response = try await provider.request(.getWeather(latitude: selectedLocation.latitude, longitude: selectedLocation.longitude, timezone: selectedLocation.timezone))
             var decodedWeather = try JSONDecoder().decode(Weather.self, from: response.data)
             decodedWeather.locationName = selectedLocation.locationName
-            weather = decodedWeather
+            return decodedWeather
         } catch {
             print("Error fetching or decoding weather data: \(error)")
+            return nil
         }
     }
 
-    private func fetchBackgroundImage() async {
+    private func fetchBackgroundImage() async -> URL? {
         do {
-            backgroundImageURL = try await unsplashService.fetchImage(for: selectedLocation.rawValue)
+            return try await unsplashService.fetchImage(for: selectedLocation.rawValue)
         } catch {
             print("Error fetching background image: \(error)")
-            backgroundImageURL = nil
+            return nil
         }
     }
     

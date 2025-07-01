@@ -3,7 +3,7 @@ import Foundation
 import Moya
 
 enum WeatherAPIService {
-    case getWeather(latitude: Double, longitude: Double)
+    case getWeather(latitude: Double, longitude: Double, timezone: String)
 }
 
 extension WeatherAPIService: TargetType {
@@ -27,12 +27,12 @@ extension WeatherAPIService: TargetType {
 
     var task: Task {
         switch self {
-        case .getWeather(let latitude, let longitude):
+        case .getWeather(let latitude, let longitude, let timezone):
             let parameters: [String: Any] = [
                 "latitude": latitude,
                 "longitude": longitude,
                 "daily": "weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_mean",
-                "timezone": "Asia/Tokyo"
+                "timezone": timezone
             ]
             return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
         }
