@@ -10,12 +10,14 @@ import SwiftUI
 struct WeatherView: View {
     
     @StateObject private var viewModel = WeatherViewModel()
+    @State private var showingSettingsSheet = false
+    @EnvironmentObject var appSettings: AppSettings
     
     var body: some View {
         NavigationView {
             ZStack {
                 // Background Image
-                if let url = viewModel.backgroundImageURL {
+                if appSettings.showBackgroundImage, let url = viewModel.backgroundImageURL {
                     AsyncImage(url: url) {
                         phase in
                         switch phase {
@@ -35,7 +37,7 @@ struct WeatherView: View {
                     .edgesIgnoringSafeArea(.all)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    Color.clear
+                    Color.gray
                 }
 
                 // Main Content
@@ -90,7 +92,7 @@ struct WeatherView: View {
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {
-                            // Setting button action
+                            showingSettingsSheet = true // Set to true to show the sheet
                         }) {
                             Image(systemName: "gearshape.fill")
                                 .foregroundStyle(.white)
@@ -104,6 +106,10 @@ struct WeatherView: View {
             }
             .task {
                 await viewModel.fetchWeather()
+            }
+            .sheet(isPresented: $showingSettingsSheet) {
+                SettingsView(showingSettingsSheet: $showingSettingsSheet)
+                    .presentationDetents([.medium, .large]) // For half modal behavior
             }
         }
     }
