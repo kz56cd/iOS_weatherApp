@@ -3,12 +3,12 @@ import SwiftUI
 
 struct SettingsView: View {
     @Binding var showingSettingsSheet: Bool
-    @State private var showBackgroundColor = false // Dummy state for toggle
+    @EnvironmentObject var appSettings: AppSettings
 
     var body: some View {
         NavigationView {
             List {
-                Toggle(isOn: $showBackgroundColor) {
+                Toggle(isOn: $appSettings.showBackgroundImage) {
                     Text("背景色を表示する")
                 }
             }

@@ -11,12 +11,13 @@ struct WeatherView: View {
     
     @StateObject private var viewModel = WeatherViewModel()
     @State private var showingSettingsSheet = false
+    @EnvironmentObject var appSettings: AppSettings
     
     var body: some View {
         NavigationView {
             ZStack {
                 // Background Image
-                if let url = viewModel.backgroundImageURL {
+                if appSettings.showBackgroundImage, let url = viewModel.backgroundImageURL {
                     AsyncImage(url: url) {
                         phase in
                         switch phase {
@@ -36,7 +37,7 @@ struct WeatherView: View {
                     .edgesIgnoringSafeArea(.all)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
-                    Color.clear
+                    Color.gray
                 }
 
                 // Main Content
