@@ -10,6 +10,7 @@ import SwiftUI
 struct WeatherView: View {
     
     @StateObject private var viewModel = WeatherViewModel()
+    @State private var showingSettingsSheet = false
     
     var body: some View {
         NavigationView {
@@ -90,7 +91,7 @@ struct WeatherView: View {
                     }
                     ToolbarItem(placement: .navigationBarTrailing) {
                         Button(action: {
-                            // Setting button action
+                            showingSettingsSheet = true // Set to true to show the sheet
                         }) {
                             Image(systemName: "gearshape.fill")
                                 .foregroundStyle(.white)
@@ -104,6 +105,12 @@ struct WeatherView: View {
             }
             .task {
                 await viewModel.fetchWeather()
+            }
+            .sheet(isPresented: $showingSettingsSheet) {
+                // Half modal content (empty for now)
+                Text("Settings")
+                    .font(.largeTitle)
+                    .presentationDetents([.medium, .large]) // For half modal behavior
             }
         }
     }
