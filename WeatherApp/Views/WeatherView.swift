@@ -13,47 +13,67 @@ struct WeatherView: View {
     
     var body: some View {
         NavigationView {
-            VStack {
-                if let weather = viewModel.weather {
-                    
-                    Label("\(weather.locationName)", systemImage: "mappin.circle")
-                        .font(.title)
-                        .foregroundStyle(.cyan)
-                    
-                    List {
-                        Label("天気: \(weather.description)", systemImage: "cloud.sun")
-                        Label("最高気温: \(weather.tempMax, specifier: "%.1f")℃", systemImage: "thermometer.sun")
-                        Label("最低気温: \(weather.tempMin, specifier: "%.1f")℃", systemImage: "thermometer.snowflake")
-                        Label("降水確率: \(weather.precipitation)%", systemImage: "cloud.rain")
+            ZStack {
+                // Background Image
+                if let url = viewModel.backgroundImageURL {
+                    AsyncImage(url: url) {
+                        $0.resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .edgesIgnoringSafeArea(.all)
+                    } placeholder: {
+                        Color.clear
                     }
-                    .listStyle(.insetGrouped)
-                    .scrollContentBackground(.hidden) // デフォルトの背景を非表示
-                    
                 } else {
-                    ProgressView("読み込み中...")
-                    Text("Weather data will be displayed here.")
-                        .padding()
-                        .foregroundStyle(.secondary)
+                    Color.clear
                 }
-                
-                Spacer(minLength: 100)
-                
 
-                Button(action: {
-                    Task { await viewModel.switchLocation() }
-                }) {
-                    Text("Switch Location")
+                // Main Content
+                VStack {
+                    if let weather = viewModel.weather {
+                        
+                        Label("\(weather.locationName)", systemImage: "mappin.circle")
+                            .font(.title)
+                            .foregroundStyle(.white)
+                            .shadow(radius: 5)
+                        
+                        List {
+                            Label("天気: \(weather.description)", systemImage: "cloud.sun")
+                            Label("最高気温: \(weather.tempMax, specifier: "%.1f")℃", systemImage: "thermometer.sun")
+                            Label("最低気温: \(weather.tempMin, specifier: "%.1f")℃", systemImage: "thermometer.snowflake")
+                            Label("降水確率: \(weather.precipitation)%", systemImage: "cloud.rain")
+                        }
+                        .listStyle(.insetGrouped)
+                        .scrollContentBackground(.hidden) // デフォルトの背景を非表示
+                        .background(Color.black.opacity(0.3))
+                        .cornerRadius(10)
                         .padding()
-                        .background(Color.blue)
-                        .foregroundColor(.white)
-                        .cornerRadius(8)
+                        
+                    } else {
+                        ProgressView("読み込み中...")
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        Text("Weather data will be displayed here.")
+                            .padding()
+                            .foregroundStyle(.white)
+                    }
+                    
+                    Spacer(minLength: 100)
+                    
+                    Button(action: {
+                        Task { await viewModel.switchLocation() }
+                    }) {
+                        Text("Switch Location")
+                            .padding()
+                            .background(Color.blue)
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                    }
                 }
-            }
-            .navigationTitle("Weather")
-            .padding()
-            .background(Color.gray.opacity(0.1))
-            .task {
-                await viewModel.fetchWeather()
+                .navigationTitle("Weather")
+                .foregroundStyle(Color.black.opacity(0.5))
+                .padding()
+                .task {
+                    await viewModel.fetchWeather()
+                }
             }
         }
     }

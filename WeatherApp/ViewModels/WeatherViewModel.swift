@@ -49,7 +49,17 @@ class WeatherViewModel: ObservableObject {
         self.provider = provider
     }
 
+    @Published var backgroundImageURL: URL?
+
+    private let unsplashService = UnsplashService()
+
     func fetchWeather() async {
+        async let fetchWeather: () = fetchWeatherData()
+        async let fetchImage: () = fetchBackgroundImage()
+        _ = await (fetchWeather, fetchImage)
+    }
+
+    private func fetchWeatherData() async {
         do {
             let response = try await provider.request(.getWeather(latitude: selectedLocation.latitude, longitude: selectedLocation.longitude))
             var decodedWeather = try JSONDecoder().decode(Weather.self, from: response.data)
@@ -57,6 +67,15 @@ class WeatherViewModel: ObservableObject {
             weather = decodedWeather
         } catch {
             print("Error fetching or decoding weather data: \(error)")
+        }
+    }
+
+    private func fetchBackgroundImage() async {
+        do {
+            backgroundImageURL = try await unsplashService.fetchImage(for: selectedLocation.rawValue)
+        } catch {
+            print("Error fetching background image: \(error)")
+            backgroundImageURL = nil
         }
     }
     
