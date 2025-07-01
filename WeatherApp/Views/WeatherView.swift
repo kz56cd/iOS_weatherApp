@@ -107,23 +107,8 @@ struct WeatherView: View {
                 await viewModel.fetchWeather()
             }
             .sheet(isPresented: $showingSettingsSheet) {
-                NavigationView {
-                    Text("Settings")
-                        .font(.largeTitle)
-                        .navigationTitle("Settings")
-                        .navigationBarTitleDisplayMode(.inline)
-                        .toolbar {
-                            ToolbarItem(placement: .navigationBarTrailing) {
-                                Button(action: {
-                                    showingSettingsSheet = false // Close the sheet
-                                }) {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundStyle(.gray)
-                                }
-                            }
-                        }
-                }
-                .presentationDetents([.medium, .large]) // For half modal behavior
+                SettingsView(showingSettingsSheet: $showingSettingsSheet)
+                    .presentationDetents([.medium, .large]) // For half modal behavior
             }
         }
     }
