@@ -81,12 +81,20 @@ struct WeatherView: View {
                 }
                 .navigationTitle("") // Remove default title
                 .toolbar {
-                    ToolbarItem(placement: .principal) {
+                    ToolbarItem(placement: .navigationBarLeading) {
                         Text("Weather")
                             .font(.largeTitle)
                             .fontWeight(.bold)
                             .foregroundStyle(.white)
                             .shadow(color: .black.opacity(0.7), radius: 3, x: 0, y: 2)
+                    }
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        Button(action: {
+                            // Setting button action
+                        }) {
+                            Image(systemName: "gearshape.fill")
+                                .foregroundStyle(.white)
+                        }
                     }
                 }
                 .navigationBarTitleDisplayMode(.inline)
