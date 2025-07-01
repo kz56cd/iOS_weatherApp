@@ -39,13 +39,14 @@ struct WeatherView: View {
                 }
 
                 // Main Content
-                VStack {
+                VStack(spacing: 10) {
                     if let weather = viewModel.weather {
                         
                         Label("\(weather.locationName)", systemImage: "mappin.circle")
                             .font(.title)
                             .foregroundStyle(.white)
                             .shadow(radius: 5)
+                            .padding()
                         
                         List {
                             Label("天気: \(weather.description)", systemImage: "cloud.sun")
@@ -55,7 +56,7 @@ struct WeatherView: View {
                         }
                         .listStyle(.insetGrouped)
                         .scrollContentBackground(.hidden) // デフォルトの背景を非表示
-                        .background(Color.black.opacity(0.3))
+                        .background(.ultraThinMaterial)
                         .cornerRadius(10)
                         .padding()
                         
@@ -67,8 +68,6 @@ struct WeatherView: View {
                             .foregroundStyle(.white)
                     }
                     
-                    Spacer(minLength: 100)
-                    
                     Button(action: {
                         Task { await viewModel.switchLocation() }
                     }) {
@@ -78,9 +77,21 @@ struct WeatherView: View {
                             .foregroundColor(.white)
                             .cornerRadius(8)
                     }
+                    .padding()
                 }
-                .navigationTitle("Weather")
-                .foregroundStyle(Color.black.opacity(0.5))
+                .navigationTitle("") // Remove default title
+                .toolbar {
+                    ToolbarItem(placement: .principal) {
+                        Text("Weather")
+                            .font(.largeTitle)
+                            .fontWeight(.bold)
+                            .foregroundStyle(.white)
+                            .shadow(color: .black.opacity(0.7), radius: 3, x: 0, y: 2)
+                    }
+                }
+                .navigationBarTitleDisplayMode(.inline)
+                .background(Color.black.opacity(0.3))
+                .cornerRadius(8)
                 .padding()
             }
             .task {
