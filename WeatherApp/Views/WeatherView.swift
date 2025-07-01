@@ -17,12 +17,23 @@ struct WeatherView: View {
                 // Background Image
                 if let url = viewModel.backgroundImageURL {
                     AsyncImage(url: url) {
-                        $0.resizable()
-                            .aspectRatio(contentMode: .fill)
-                            .edgesIgnoringSafeArea(.all)
-                    } placeholder: {
-                        Color.clear
+                        phase in
+                        switch phase {
+                        case .empty:
+                            Color.gray // Stable background during loading
+                        case .success(let image):
+                            image
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                                .containerRelativeFrame(.horizontal)
+                        case .failure:
+                            Color.gray // Stable background on failure
+                        @unknown default:
+                            Color.gray
+                        }
                     }
+                    .edgesIgnoringSafeArea(.all)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
                     Color.clear
                 }

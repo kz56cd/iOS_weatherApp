@@ -13,12 +13,14 @@ class WeatherViewModel: ObservableObject {
     enum Location: String, CaseIterable {
         case japan = "Tokyo"
         case usa = "New York"
+        case china = "China"
         case uk = "London"
 
         var latitude: Double {
             switch self {
             case .japan: return 35.6895
             case .usa: return 40.7128
+            case .china: return 39.9042
             case .uk: return 51.5074
             }
         }
@@ -27,6 +29,7 @@ class WeatherViewModel: ObservableObject {
             switch self {
             case .japan: return 139.6917
             case .usa: return -74.0060
+            case .china: return 116.4074
             case .uk: return -0.1278
             }
         }
@@ -35,6 +38,7 @@ class WeatherViewModel: ObservableObject {
             switch self {
             case .japan: return "東京"
             case .usa: return "ニューヨーク"
+            case .china: return "北京"
             case .uk: return "ロンドン"
             }
         }
@@ -43,6 +47,7 @@ class WeatherViewModel: ObservableObject {
             switch self {
             case .japan: return "Asia/Tokyo"
             case .usa: return "America/New_York"
+            case .china: return "Asia/Shanghai"
             case .uk: return "Europe/London"
             }
         }
@@ -73,6 +78,9 @@ class WeatherViewModel: ObservableObject {
         let (weatherData, imageURL) = await (weatherResult, imageURLResult)
         self.weather = weatherData
         self.backgroundImageURL = imageURL
+        
+        print("self.weather: ", self.weather)
+        
     }
 
     private func fetchWeatherData() async -> Weather? {
