@@ -19,7 +19,7 @@ class WeatherViewModel: ObservableObject {
         case germany = "Berlin"
         case australia = "Sydney"
         case brazil = "Rio de Janeiro"
-
+        
         var latitude: Double {
             switch self {
             case .japan: return 35.6895
@@ -32,7 +32,7 @@ class WeatherViewModel: ObservableObject {
             case .brazil: return -22.9068
             }
         }
-
+        
         var longitude: Double {
             switch self {
             case .japan: return 139.6917
@@ -58,7 +58,7 @@ class WeatherViewModel: ObservableObject {
             case .brazil: return "リオデジャネイロ"
             }
         }
-
+        
         var timezone: String {
             switch self {
             case .japan: return "Asia/Tokyo"
@@ -72,37 +72,36 @@ class WeatherViewModel: ObservableObject {
             }
         }
     }
-
+    
     @Published var weather: Weather?
     @Published var selectedLocation: Location = .japan
-
+    @Published var backgroundImageURL: URL?
+    
+    private let unsplashService = UnsplashService()
     private let provider: MoyaProvider<WeatherAPIService>
-
+    
     init(provider: MoyaProvider<WeatherAPIService> = MoyaProvider<WeatherAPIService>()) {
         self.provider = provider
     }
-
-    @Published var backgroundImageURL: URL?
-
-    private let unsplashService = UnsplashService()
-
+    
     func fetchWeather() async {
         // Reset state before fetching to ensure a clean loading state
         self.weather = nil
         self.backgroundImageURL = nil
-
+        
         async let weatherResult = fetchWeatherData()
         async let imageURLResult = fetchBackgroundImage()
-
+        
         // Await both results concurrently and then update the state once.
         let (weatherData, imageURL) = await (weatherResult, imageURLResult)
         self.weather = weatherData
         self.backgroundImageURL = imageURL
-        
-        print("self.weather: ", self.weather)
-        
     }
+}
 
+// MARK: - Private Methods
+
+extension WeatherViewModel {
     private func fetchWeatherData() async -> Weather? {
         do {
             let response = try await provider.request(.getWeather(latitude: selectedLocation.latitude, longitude: selectedLocation.longitude, timezone: selectedLocation.timezone))
