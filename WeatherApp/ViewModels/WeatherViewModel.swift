@@ -13,15 +13,23 @@ class WeatherViewModel: ObservableObject {
     enum Location: String, CaseIterable {
         case japan = "Tokyo"
         case usa = "New York"
-        case china = "China"
         case uk = "London"
+        case china = "Beijing"
+        case france = "Paris"
+        case germany = "Berlin"
+        case australia = "Sydney"
+        case brazil = "Rio de Janeiro"
 
         var latitude: Double {
             switch self {
             case .japan: return 35.6895
             case .usa: return 40.7128
-            case .china: return 39.9042
             case .uk: return 51.5074
+            case .china: return 39.9042
+            case .france: return 48.8566
+            case .germany: return 52.5200
+            case .australia: return -33.8688
+            case .brazil: return -22.9068
             }
         }
 
@@ -29,8 +37,12 @@ class WeatherViewModel: ObservableObject {
             switch self {
             case .japan: return 139.6917
             case .usa: return -74.0060
-            case .china: return 116.4074
             case .uk: return -0.1278
+            case .china: return 116.4074
+            case .france: return 2.3522
+            case .germany: return 13.4050
+            case .australia: return 151.2093
+            case .brazil: return -43.1729
             }
         }
         
@@ -38,8 +50,12 @@ class WeatherViewModel: ObservableObject {
             switch self {
             case .japan: return "東京"
             case .usa: return "ニューヨーク"
-            case .china: return "北京"
             case .uk: return "ロンドン"
+            case .china: return "北京"
+            case .france: return "パリ"
+            case .germany: return "ベルリン"
+            case .australia: return "シドニー"
+            case .brazil: return "リオデジャネイロ"
             }
         }
 
@@ -47,8 +63,12 @@ class WeatherViewModel: ObservableObject {
             switch self {
             case .japan: return "Asia/Tokyo"
             case .usa: return "America/New_York"
-            case .china: return "Asia/Shanghai"
             case .uk: return "Europe/London"
+            case .china: return "Asia/Shanghai"
+            case .france: return "Europe/Paris"
+            case .germany: return "Europe/Berlin"
+            case .australia: return "Australia/Sydney"
+            case .brazil: return "America/Sao_Paulo"
             }
         }
     }
