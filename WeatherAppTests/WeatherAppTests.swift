@@ -19,14 +19,14 @@ struct WeatherViewModelTests {
         let viewModel = await WeatherViewModel()
         #expect(await viewModel.selectedLocation == .japan)
 
+        let allLocations = WeatherViewModel.Location.allCases
+        for i in 1..<allLocations.count {
+            await viewModel.switchLocation()
+            #expect(await viewModel.selectedLocation == allLocations[i])
+        }
+        // After cycling through all, it should return to the first one
         await viewModel.switchLocation()
-        #expect(await viewModel.selectedLocation == .usa)
-
-        await viewModel.switchLocation()
-        #expect(await viewModel.selectedLocation == .uk)
-
-        await viewModel.switchLocation()
-        #expect(await viewModel.selectedLocation == .japan)
+        #expect(await viewModel.selectedLocation == allLocations[0])
     }
 
     @Test func testFetchWeather_Success() async throws {
